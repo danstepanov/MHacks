@@ -1,0 +1,87 @@
+<div class="row headline">
+    <div class="span4">
+        <img class='full-border' src='<?php echo $this->vehicle['photo'] ?>'/>
+    </div>
+    <div class="span8">
+        <div class="row">
+            <div class="span8">
+                <h1><?php echo $this->vehicle['display_title'] ?></h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="span4">
+                <strong>Wholesale Value:</strong> $<?php echo number_format($this->vehicle['base_whole_avg'], 2) ?>
+            </div>
+            <div class="span4">
+                <strong>Body Style:</strong> <?php echo $this->vehicle['body_style'] ?>
+            </div>
+        </div>
+        <div class="row">
+            <div class="span4">
+                <strong>Trade In Value:</strong> $<?php echo number_format($this->vehicle['tradein_avg'], 2) ?>
+            </div>
+            <div class="span4">
+                <strong>Engine:</strong> <?php echo $this->vehicle['engine_description'] ?>
+            </div>
+        </div>
+        <div class="row">
+            <div class="span4">
+                <strong>Market Value:</strong> $<?php echo number_format($this->vehicle['retail_avg'], 2) ?>
+            </div>
+            <div class="span4">
+                <strong>Transmission:</strong> <?php echo $this->vehicle['transmission'] ?>
+            </div>
+        </div>
+        <div class="row">
+            <div class="span4">
+                <strong>New MSRP:</strong> $<?php echo number_format($this->vehicle['msrp'], 2) ?>
+            </div>
+            <div class="span4">
+                <strong>Miles Per Gallon (City):</strong> <?php echo number_format($this->vehicle['city_mpg'], 1) ?>
+            </div>
+        </div>
+        <div class="row">
+            <div class='span4'>  
+                <strong>Exterior Colors: </strong>
+                <ul class='gallery-post-grid swatches'>
+                    <?php foreach( $this->vehicle['external_colors'] as $color ) { ?>
+                    <li><div class='swatch' style="background: <?php echo $color['swatch'] ?>"></div></li>
+                    <?php } ?>
+                </ul>
+            </div>
+            <div class='span4'>  
+                <strong>Interior Colors: </strong>
+                <ul class='gallery-post-grid swatches'>
+                    <?php foreach( $this->vehicle['interior_colors'] as $color ) { ?>
+                    <li><div class='swatch' style="background: <?php echo $color['swatch'] ?>"></div></li>
+                    <?php } ?>
+                </ul>
+            </div>
+        </div>
+        <div class='row'>
+            <div class='span7'>
+                <a href='#' class='btn btn-primary btn-block'>View More Specifications</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="articles">
+    <h2 class='text-center'>Articles</h2>
+    <div class='row clearfix no-margin'>
+        <ul class='gallery-post-grid holder'>
+            <li class='span4 gallery-item'>
+                <a href="gallery-single.htm"><img src="http://placehold.it/400x400" alt="Gallery"></a>
+                <span class="project-details"><a href="gallery-single.htm">Car and Driver</a>SF Review.</span>
+            </li>
+            <li class='span4 gallery-item'>
+                <a href="gallery-single.htm"><img src="http://placehold.it/400x400" alt="Gallery"></a>
+                <span class="project-details"><a href="gallery-single.htm">Car and Driver</a>SF Review.</span>
+            </li>
+            <li class='span4 gallery-item'>
+                <a href="gallery-single.htm"><img src="http://placehold.it/400x400" alt="Gallery"></a>
+                <span class="project-details"><a href="gallery-single.htm">Car and Driver</a>SF Review.</span>
+            </li>
+        </ul>
+    </div>
+</div>
