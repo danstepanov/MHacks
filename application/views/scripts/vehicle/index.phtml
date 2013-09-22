@@ -1,10 +1,8 @@
+
 <div class="row headline">
     <div class="span4">
         <img class='full-border-thick' src='<?php echo $this->vehicle['photo'] ?>'/>
         <p></p>
-        <p>   
-            <a class='btn btn-primary btn-block'>Change Year</a>
-        </p>
         <p>   
             <a class='btn btn-primary btn-block' target='_blank' href='<?php echo $this->url(array('controller' => 'vehicle' ,'action'=>'servepdf', 'uvc'=> $this->vehicle['full_uvc']), null, true);?>'>Download New Car Cost Guide</a>
         </p>
@@ -44,30 +42,43 @@
                 <strong>New MSRP:</strong> $<?php echo number_format($this->vehicle['msrp'], 2) ?>
             </div>
             <div class="span3">
-                <strong>Miles Per Gallon (City):</strong> <?php echo number_format($this->vehicle['city_mpg'], 1) ?>
+                <strong>Miles Per Gallon (City):</strong> 
+                <?php if($this->vehicle['city_mpg'] == '') { ?>
+                    N/A
+                <?php } else { ?>
+                    <?php echo number_format($this->vehicle['city_mpg'], 1) ?>
+                <?php } ?>
             </div>
         </div>
         <div class="row">
             <div class='span3'>  
                 <strong>Exterior Colors: </strong>
                 <ul class='gallery-post-grid swatches'>
-                    <?php foreach( $this->vehicle['external_colors'] as $color ) { ?>
-                    <li><div class='swatch' style="background: <?php echo $color['swatch'] ?>"></div></li>
+                    <?php if(!is_array($this->vehicle['external_colors'])) { ?>
+                        N/A
+                    <?php } else { ?>
+                        <?php foreach( $this->vehicle['external_colors'] as $color ) { ?>
+                        <li><div class='swatch' style="background: <?php echo $color['swatch'] ?>"></div></li>
+                        <?php } ?>
                     <?php } ?>
                 </ul>
             </div>
             <div class='span3'>  
                 <strong>Interior Colors: </strong>
                 <ul class='gallery-post-grid swatches'>
-                    <?php foreach( $this->vehicle['interior_colors'] as $color ) { ?>
-                    <li><div class='swatch' style="background: <?php echo $color['swatch'] ?>"></div></li>
+                    <?php if(!is_array($this->vehicle['interior_colors'])) { ?>
+                        N/A
+                    <?php } else { ?>
+                        <?php foreach( $this->vehicle['interior_colors'] as $color ) { ?>
+                        <li><div class='swatch' style="background: <?php echo $color['swatch'] ?>"></div></li>
+                        <?php } ?>
                     <?php } ?>
                 </ul>
             </div>
         </div>
         <div class='row'>
             <div class='span7'>
-                <a href='#' class='btn btn-primary btn-block'>View More Specifications</a>
+                <a href='#details' class='btn btn-primary btn-block'>View More Specifications</a>
             </div>
         </div>
     </div>
@@ -87,3 +98,235 @@
         </ul>
     </div>
 </div>
+
+<div class='detail'>
+    <h2 class='text-center'>Details</h2>
+    <div id='details' class='row clearfix no-margin'>
+        <ul class='nav nav-tabs'>
+            <li class='active'><a href='#sche' data-toggle='tab'>Maintenance Schedule</a></li>
+            <li><a href='#financing' data-toggle='tab'>Financing</a></li>
+            <li><a href='#performance' data-toggle='tab'>Performance Data</a></li>
+        </ul>
+        <div class='tab-content'>
+            <div class='tab-pane active' id='sche'>
+                <?php if($this->maintenanceData) { ?>
+                <h2>Parts you Need to Maintain Intervally</h2>
+                <table class='table'>
+                    <thead>
+                        <tr>
+                            <th>What</th>
+                            <th>When</th>
+                            <th>Estimated Mechanic Effort</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach($this->maintenanceData['distance'] as $item) { ?>
+                        <tr>
+                            <td><?php echo $item['description'] ?></td>
+                            <td><?php echo $item['frequency'] ?></td>
+                            <td><?php echo $item['effort'] ?></td>
+                        </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
+                
+                <h2>Parts you Need to Maintain on Indicator Light</h2>
+                <table class='table'>
+                    <thead>
+                        <tr>
+                            <th>What</th>
+                            <th>When</th>
+                            <th>Estimated Mechanic Effort</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach($this->maintenanceData['indicator'] as $item) { ?>
+                        <tr>
+                            <td><?php echo $item['description'] ?></td>
+                            <td><?php echo $item['frequency'] ?></td>
+                            <td><?php echo $item['effort'] ?></td>
+                        </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
+                
+                <h2>Parts you Need to Maintain</h2>
+                <table class='table'>
+                    <thead>
+                        <tr>
+                            <th>What</th>
+                            <th>When</th>
+                            <th>Estimated Mechanic Effort</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach($this->maintenanceData['other'] as $item) { ?>
+                        <tr>
+                            <td><?php echo $item['description'] ?></td>
+                            <td>Unknown</td>
+                            <td><?php echo $item['effort'] ?></td>
+                        </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
+                <?php } else { ?>
+                    <h2>Oh no! No data available.</h2>
+                <?php } ?>
+            </div>
+            <div class='tab-pane' id='financing'>
+                <div class='row'>
+                    <div class='span5'>
+                    <form id='financing-form' class='form-horizontal' action='<?php echo $this->url(array('controller'=>'finance', 'action'=>'index'), null, true) ?>'>
+                        <input type='hidden' name='model' value='<?php echo $this->vehicle['model'] ?>'/>
+                        <div class='control-group'>
+                            <label class='control-label' for='zipcode'>Zipcode*:</label>
+                            <div class='controls'>
+                                <input type='text' name='zipcode' placeholder='Zipcode'/>
+                            </div>
+                        </div>
+                        <div class='control-group'>
+                            <label class='control-label' for='lease'>Lease / Loan*:</label>
+                            <div class='controls'>
+                                <select name='lease'>
+                                    <option value='lease'>Lease</option>
+                                    <option value='loan'>Loan</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class='control-group'>
+                            <label class='control-label' for='months'>Months*:</label>
+                            <div class='controls'>
+                                <select name='months'>
+                                    <option value='24'>24</option>
+                                    <option value='36'>36</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class='control-group'>
+                            <label class='control-label' for='downpay'>Down Payment*:</label>
+                            <div class='controls'>
+                                <input type='number' name='downpay' placeholder='0'/>
+                            </div>
+                        </div>
+                        <div class='control-group'>
+                            <label class='control-label' for='credit'>Credit Score*:</label>
+                            <div class='controls'>
+                                <input type='number' name='credit' placeholder='650'/>
+                            </div>
+                        </div>
+                        <div class='control-group'>
+                            <div class='controls'>
+                                <button type="submit" class="btn btn-primary">Get Finance Data!</button>
+                            </div>
+                        </div>
+                    </form>
+                    </div>
+                    <div class='clearfix span5 offset1 well' id='finance-target'>
+                        Fill out the form for financing information. This may only be available in certain
+                        zipcodes at this time.
+                    </div>
+                </div>
+            </div>
+            <div class='tab-pane' id='performance'>
+                Three
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type='text/javascript'>
+(function($) {
+	    $('#financing-form').submit(function(e) { 
+	        e.preventDefault();
+
+	        var data = $(this).serialize();
+	        var url = $(this).attr('action');
+
+	        $.post(url, data).success(function(data) {
+		        data = JSON.parse(data);
+
+		        var div = "";
+		        var target = $("#finance-target");
+		        if(data.length > 0)
+		        {
+			        target.empty();
+			       /* $("#financing-form").parent().hide();
+			        target.removeClass("span5").addClass("span10");*/
+		        }
+		        else
+		        { 
+			        target.html("No financing is available for these options at this time. Sorry, try again!");
+		        }
+	            for(var i = 0; i < data.length; i++)
+	            {
+		            var obj = data[i];
+		            var title = obj.VehicleCode.Condition + " " + obj.VehicleDescription.Year + " " +  obj.VehicleDescription.Make +
+		                " " + obj.VehicleDescription.Model + " " + obj.VehicleDescription.Style;
+		            div += "<div class='row finance-entry hidden'>";
+		            div += "<div class='span5'>";
+			        div += "<h4>"+title+"</h4>";
+
+			        var pager = "";
+			        pager += '<div class="pagination">';
+	                pager += '<ul>';
+	                pager += '<li class="active"><a class="prev" href="#">Prev</a></li>';
+	                pager += '<li><a class="next" href="#">Next</a></li>';
+	                pager += '</ul>';
+	                pager += '</div>';
+	                div += pager;
+	                
+			        var table = "<table class='table'>";
+			        table += "<thead><tr><th>APR</th><th>Monthly Payment</th><th>Term(M)</th><th>Down Payment</th><th>Residual Value</th></tr></thead><tbody>";
+			        for(var j = 0; j < obj.payments.length; j++)
+			        {
+				        var payment = obj.payments[j];
+				        table += "<tr>";
+  			                table += "<td>" + payment.APRRounded + "</td>";
+				            table += "<td>$" + payment.MonthlyPayment + "</td>";
+				            table += "<td>" + payment.Term + "</td>";
+				            table += "<td>$" + payment.DueAtSigning + "</td>";
+				            table += "<td>$" + payment.ResidualDollar + "</td>";
+				        table += "</tr>";
+			        }
+			        table += "</tbody></table>";
+			        div += table;
+		            div += "</div></div>";
+		            target.append(div);
+		            target.find(".finance-entry").first().removeClass('hidden');
+		            checkPagination();
+	            }
+	        });
+	        return false;
+	    });
+	    $("body").on('click', ".pagination a.next", function(e) {
+		    var target = $(".finance-entry").not(".hidden");
+		    if(target.next().length > 0)
+		    	  target.toggleClass('hidden').next().toggleClass('hidden');
+		    checkPagination();
+	        e.preventDefault();
+	        return false;
+	    });
+	    $("body").on('click', ".pagination a.prev", function(e) {
+		    var target = $(".finance-entry").not(".hidden");
+		    if(target.prev().length > 0)
+		    	  $(".finance-entry").not(".hidden").toggleClass('hidden').prev().toggleClass('hidden');
+	    	checkPagination();
+	        e.preventDefault();
+	        return false;
+	    });
+
+	    function checkPagination()
+	    {
+	    	if($(".finance-entry").not(".hidden").prev().length == 0)
+		    	$(".pagination a.prev").parent().addClass("active");
+	    	else
+	    		$(".pagination a.prev").parent().removeClass("active");
+    		
+	    	if($(".finance-entry").not(".hidden").next().length == 0)
+		    	$(".pagination a.next").parent().addClass("active");
+		    else
+		    	$(".pagination a.next").parent().removeClass("active");
+	    }
+	    window.checkPagination = checkPagination;
+})(jQuery);
+</script>

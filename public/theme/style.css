@@ -10,7 +10,7 @@
  */
 
 html, body {
-	font-size:13px; 
+	font-size:15px; 
 	line-height:18px;
 	height: 100%;
  }
@@ -784,4 +784,12 @@ a.accordion-toggle{background: #f5f5f5;}
  .swatch {
 	width: 40px;
  	height: 40px;	
+ }
+ 
+ .hero-unit h1 {
+	margin-bottom: 20px;
+ }
+ 
+ .finance-entry.hidden {
+	display: none;
  }

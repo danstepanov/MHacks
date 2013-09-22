@@ -4,7 +4,7 @@ class Application_Model_Api_Blackbook_UsedVehiclePhoto extends Application_Model
 {
    public function __construct()
    {
-       $this->url = 'http://autoAPI.hearst.com/v1/UsedCarWS/UsedCarWS/Photos';
+       $this->url = 'http://hearstcars.api.mashery.com/v1/UsedCarWS/UsedCarWS/Photos';
    }
     
    public function lookupByUvc($uvc)
@@ -13,11 +13,16 @@ class Application_Model_Api_Blackbook_UsedVehiclePhoto extends Application_Model
        if(!file_exists($path))
        {
            $parsed = $this->execute('/'.$uvc);
-           $photo = $parsed['photo']['file_contents'];
-         
-           if($photo != '')
-               file_put_contents($path, base64_decode($photo));
+           if(isset($parsed['photo']['file_contents']))
+           {
+               $photo = $parsed['photo']['file_contents'];
+             
+               if($photo != '')
+                   file_put_contents($path, base64_decode($photo));
+           }
        }
-       return '/' . $path;
+       if(file_exists($path))
+           return '/' . $path;
+       return '/images/display/fill.jpg';
    }
 }

@@ -16,13 +16,22 @@ class VehicleController extends Zend_Controller_Action
         $uvc = $this->_getParam('uvc', $subaruForestor);
         
         $usedVehicleAPI = new Application_Model_Api_Blackbook_UsedVehicle();
+        
         $vehicle = $usedVehicleAPI->lookupByUvc($uvc);
 
+        $vehicleVinAPI = new Application_Model_Api_Blackbook_VehicleVin($vehicle['full_vin']);
+        $configuration = $vehicleVinAPI->getConfigurationData();
+        
+        $maintenanceAPI = new Application_Model_Api_Motor_Maintenance($configuration['VehicleConfigurationID']);
+        $this->view->maintenanceData = $maintenanceAPI->getData();
+        
         $articleSearch = new Application_Model_Api_Cad_Article();
         $cursor = $articleSearch->getArticleByMake($vehicle['make']);
         
-        $vehicle['articles'] = iterator_to_array($cursor);
-        shuffle($vehicle['articles']);
+        $vehicle['articles'] = $cursor;
+        if(is_array($vehicle['articles']))
+            shuffle($vehicle['articles']);
+        
         $this->view->vehicle = $vehicle;
     }
 

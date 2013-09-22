@@ -4,7 +4,7 @@ class Application_Model_Api_Blackbook_PDFSpec extends Application_Model_Api_Abst
 {
    public function __construct()
    {
-       $this->url = 'http://autoAPI.hearst.com/v1/UsedCarWS/UsedCarWS/PDFSpecs';
+       $this->url = 'http://hearstcars.api.mashery.com/v1/UsedCarWS/UsedCarWS/PDFSpecs';
    }
     
    public function lookupByUvc($uvc)

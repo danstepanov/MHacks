@@ -9,16 +9,27 @@ class Application_Model_Api_Cad_CarMakes extends Application_Model_Api_Abstract_
     
     public function getMakes()
     {
-        $results = $this->execute('');
-        $results = $results['vehicles']['makes'];   
+        $mongoCache = new Application_Model_MongoCache();
         
-        $return = array();
+        $return = $mongoCache->getCacheItem('makes');
         
-        foreach($results as $result)
+        if($return == null)
         {
-            $return[$result['name']] = $result['id'];
+            $results = $this->execute('');
+            $results = $results['vehicles']['makes'];   
+            
+            $return = array();
+            
+            foreach($results as $result)
+            {
+                $return[$result['name']] = $result['id'];
+            }
+            $mongoCache->insert('makes', $return);
         }
-        
+        else
+        {
+            $return = array_shift($return);
+        }
         return $return;
     }
 }

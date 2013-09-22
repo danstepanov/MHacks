@@ -21,10 +21,13 @@ class Application_Model_Api_Cad_Article
         
         $carMakes = $carMakesApi->getMakes();
         
-        $makeID = $carMakes[$make];
+        if(isset($carMakes[$make]))
+            $makeID = $carMakes[$make];
+        else
+            return array();
         
         $cursor = $this->collection->find(['makeID' => $makeID]);
         
-        return $cursor;
+        return iterator_to_array($cursor);
     }
 }

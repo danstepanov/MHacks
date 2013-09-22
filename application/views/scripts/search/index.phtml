@@ -1,0 +1,126 @@
+<div class='row'>
+    <div class='hero-unit well'>
+        <h1>Select Your Specs</h1>
+        <form id='vehicle-form' class='form-horizontal' action='<?php echo $this->url(array('controller'=>'vehicle', 'action'=>'index'), null, true) ?>' method='get'>
+            <div class='control-group'>
+                <label class='control-label' for='make'>Make*:</label>
+                <div class='controls'>
+                    <select id='make-select'>
+                        <option selected value='x'>Select a Make</option>
+                        <?php foreach($this->makes as $make) { ?>
+                        <option value='<?php echo $make['make'] ?>'><?php echo $make['make'] ?></option>
+                        <?php } ?>
+                    </select>
+                </div>
+            </div>
+            <div class='control-group'>
+                <label class='control-label' for='make'>Model*:</label>
+                <div class='controls'>
+                    <select id='model-select'>
+                        <option selected value='x'>Select a Model</option>
+                    </select>
+                </div>
+            </div>
+            <div class='control-group'>
+                <label class='control-label' for='year'>Year*: </label>
+                <div class='controls'>
+                    <select id='year-select'>
+                        <option selected value='x'>Select a Year</option>
+                    </select>
+                </div>
+            </div>
+            <div class='control-group'>
+                <label class='control-label' for='year'>Style*: </label>
+                <div class='controls'>
+                    <select id='style-select'>
+                        <option selected value='x'>Select a Style</option>
+                    </select>
+                </div>
+            </div>
+            <div class='control-group'>
+                <label class='control-label' for='uvc'>Universal Vehicle Code*:</label>
+                <div class='controls'>
+                    <input id='uvc' type='text' name='uvc' value='' readonly='true' />
+                </div>
+            </div>
+            <div class='control-group'>
+                <div class='controls'>        
+                    <button type="submit" class="btn btn-primary">Search It!</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type='text/javascript'>
+(function($) {
+	$('#make-select').change(function() {
+	    var makeValue = $(this).find(":selected").val();
+
+        var url = '<?php echo $this->url(array('controller'=>'search', 'action'=>'ajax-model'), null, true); ?>';
+
+        $.get(url + "/make/" + makeValue).success(function(data) {
+            data = JSON.parse(data);
+            $('#model-select').find('option[value!="x"]').remove();
+            for(var i = 0; i < data.length; i++)
+            {
+                $('#model-select').append("<option value='"+data[i]['model']+"'>"+data[i]['model']+"</option>");
+            }
+        });
+	});
+	$('#make-select').change();
+	
+    $('#model-select').change(function() {
+	    var makeValue = $('#make-select').find(":selected").val();
+        var modelValue = $(this).find(":selected").val();
+
+        var url = '<?php echo $this->url(array('controller'=>'search', 'action'=>'ajax-year'), null, true); ?>';
+
+        $.get(url + "/make/" + makeValue + "/model/" + modelValue).success(function( data) {
+            data = JSON.parse(data);
+            $('#year-select').find('option[value!="x"]').remove();
+            for(var i = 0; i < data.length; i++)
+            {
+                $('#year-select').append("<option value='"+data[i]['year']+"'>"+data[i]['year']+"</option>");
+            }
+        });
+    });
+
+    $('#year-select').change(function() {
+    	var makeValue = $('#make-select').find(":selected").val();
+    	var modelValue = $('#model-select').find(":selected").val();
+        var yearValue = $(this).find(":selected").val();
+
+        var url = '<?php echo $this->url(array('controller'=>'search', 'action'=>'ajax-style'), null, true); ?>';
+
+        $.get(url + "/make/" + makeValue + "/model/" + modelValue + "/year/" + yearValue).success(function( data) {
+            data = JSON.parse(data);
+            $('#style-select').find('option[value!="x"]').remove();
+            for(var i = 0; i < data.length; i++)
+            {
+                $('#style-select').append("<option value='"+data[i]['style']+"'>"+data[i]['style']+"</option>");
+            }
+        });
+    });
+
+    $('#style-select').change(function() {
+    	var makeValue = $('#make-select').find(":selected").val();
+    	var modelValue = $('#model-select').find(":selected").val();
+        var yearValue = $('#year-select').find(":selected").val();
+        var styleValue = $(this).find(":selected").val();
+
+        var url = '<?php echo $this->url(array('controller'=>'search', 'action'=>'ajax-uvc'), null, true); ?>';
+
+        var data = {
+        	    make: makeValue,
+        	    model: modelValue,
+        	    year: yearValue,
+        	    style: styleValue
+        };
+        $.post(url, data).success(function( data) {
+            data = JSON.parse(data);
+            $('#uvc').val(data[0]['uvc']);
+        });
+    });
+})(jQuery);
+</script>
