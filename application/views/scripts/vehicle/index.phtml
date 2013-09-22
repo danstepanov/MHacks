@@ -117,6 +117,8 @@
                             <th>What</th>
                             <th>When</th>
                             <th>Estimated Mechanic Effort</th>
+                            <th>Cost</th>
+                            <th>Reminder</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -125,6 +127,8 @@
                             <td><?php echo $item['description'] ?></td>
                             <td><?php echo $item['frequency'] ?></td>
                             <td><?php echo $item['effort'] ?></td>
+                            <td>$<?php echo number_format($item['effort'] * (100/60), 2) ?></td>
+                            <td><a class='setup' href='#'>Setup Reminder</a></td>
                         </tr>
                         <?php } ?>
                     </tbody>
@@ -137,6 +141,7 @@
                             <th>What</th>
                             <th>When</th>
                             <th>Estimated Mechanic Effort</th>
+                            <th>Cost</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -145,6 +150,7 @@
                             <td><?php echo $item['description'] ?></td>
                             <td><?php echo $item['frequency'] ?></td>
                             <td><?php echo $item['effort'] ?></td>
+                            <td>$<?php echo number_format($item['effort'] * (100/60), 2) ?></td>
                         </tr>
                         <?php } ?>
                     </tbody>
@@ -157,6 +163,7 @@
                             <th>What</th>
                             <th>When</th>
                             <th>Estimated Mechanic Effort</th>
+                            <th>Cost</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -165,6 +172,7 @@
                             <td><?php echo $item['description'] ?></td>
                             <td>Unknown</td>
                             <td><?php echo $item['effort'] ?></td>
+                            <td>$<?php echo number_format($item['effort'] * (100/60), 2) ?></td>
                         </tr>
                         <?php } ?>
                     </tbody>
@@ -364,5 +372,18 @@
 		    	$(".pagination a.next").parent().removeClass("active");
 	    }
 	    window.checkPagination = checkPagination;
+
+	    $(".setup").click(function(e) {
+		    $("tr.temp").remove();
+		    var row = "<tr class='temp'>";
+		    row += "<td><input name='months-since' type='text' placeholder='Months Since Last' /></td>";
+		    row += "<td><input name='miles-since' type='text' placeholder='Miles Since Last' /></td>";
+		    row += "<td><input name='miles-per' type='text' placeholder='Miles Per Week' /></td>";
+		    row += "<td><input name='email' type='text' placeholder='Email' /></td>";
+		    row += "</tr>";
+		    $(this).parents("tr").first().after(row);
+	        e.preventDefault();
+	        return true;
+	    });
 })(jQuery);
 </script>
