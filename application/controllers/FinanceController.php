@@ -13,11 +13,7 @@ class FinanceController extends Zend_Controller_Action
         $financeModel = new Application_Model_Api_Cad_Finance();
         
         $zip = $this->_getParam('zipcode', '10591');
-        $model = $this->_getParam('model', 'forester');
-        
-        $vehicleByNameAPI = new Application_Model_Api_Cad_VehicleByName($model);
-        $model = $vehicleByNameAPI->getModelID();
-        
+        $model = $this->_getParam('model', '126');
         $lease = $this->_getParam('lease', 'Lease');
         $months = $this->_getParam('months', '24');
         $downpay = $this->_getParam('downpay', '0');

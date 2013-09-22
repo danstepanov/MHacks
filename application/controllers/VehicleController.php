@@ -31,7 +31,14 @@ class VehicleController extends Zend_Controller_Action
         $vehicle['articles'] = $cursor;
         if(is_array($vehicle['articles']))
             shuffle($vehicle['articles']);
+
+        $vehicleByNameAPI = new Application_Model_Api_Cad_VehicleByName($vehicle['model']);
+        $model = $vehicleByNameAPI->getModelID();
         
+        $performanceDataAPI = new Application_Model_Api_Cad_PerformanceData($model, $vehicle['full_year']);
+        $this->view->perfdata = $performanceDataAPI->lookup();
+                
+        $this->view->model = $model;
         $this->view->vehicle = $vehicle;
     }
 

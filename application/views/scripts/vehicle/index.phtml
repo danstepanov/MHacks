@@ -104,7 +104,7 @@
     <div id='details' class='row clearfix no-margin'>
         <ul class='nav nav-tabs'>
             <li class='active'><a href='#sche' data-toggle='tab'>Maintenance Schedule</a></li>
-            <li><a href='#financing' data-toggle='tab'>Financing</a></li>
+            <li><a href='#financing' data-toggle='tab'>New Car Financing</a></li>
             <li><a href='#performance' data-toggle='tab'>Performance Data</a></li>
         </ul>
         <div class='tab-content'>
@@ -177,7 +177,7 @@
                 <div class='row'>
                     <div class='span5'>
                     <form id='financing-form' class='form-horizontal' action='<?php echo $this->url(array('controller'=>'finance', 'action'=>'index'), null, true) ?>'>
-                        <input type='hidden' name='model' value='<?php echo $this->vehicle['model'] ?>'/>
+                        <input type='hidden' name='model' value='<?php echo $this->model ?>'/>
                         <div class='control-group'>
                             <label class='control-label' for='zipcode'>Zipcode*:</label>
                             <div class='controls'>
@@ -199,6 +199,9 @@
                                 <select name='months'>
                                     <option value='24'>24</option>
                                     <option value='36'>36</option>
+                                    <option value='48'>48</option>
+                                    <option selected value='60'>60</option>
+                                    <option value='72'>72</option>
                                 </select>
                             </div>
                         </div>
@@ -211,7 +214,7 @@
                         <div class='control-group'>
                             <label class='control-label' for='credit'>Credit Score*:</label>
                             <div class='controls'>
-                                <input type='number' name='credit' placeholder='650'/>
+                                <input type='number' name='credit' placeholder='800'/>
                             </div>
                         </div>
                         <div class='control-group'>
@@ -228,7 +231,40 @@
                 </div>
             </div>
             <div class='tab-pane' id='performance'>
-                Three
+                <h2>Real World Performance Metrics</h2>
+                <?php if(!is_array($this->perfdata) || count($this->perfdata) == 0) { ?>
+                    Sorry, there are no real world performance metrics for this car.
+                <?php } else { ?>
+                    <?php foreach($this->perfdata as $data) { ?>
+                        <div class='row'>
+                            <div class='span10 offset1 well'>
+                                <h4>Performance Trial:</h4>
+                                <table class='table'>
+                                    <thead>
+                                        <tr>
+                                            <th>Metric</th>
+                                            <th>Measurement</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach($data as $k=>$v) { ?>
+                                        <?php 
+                                            $k = str_replace("_", " ", $k);
+                                            $k = ucwords($k);
+                                            if(strpos($k, "Id")) continue;
+                                            if(!$v || $v == '') continue;
+                                        ?>
+                                        <tr>
+                                            <td><?php echo $k ?></td>
+                                            <td><?php echo $v ?></td>
+                                        </tr>
+                                        <?php } ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    <?php } ?>
+                <?php } ?>
             </div>
         </div>
     </div>

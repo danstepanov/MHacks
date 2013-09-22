@@ -23,7 +23,10 @@ class Application_Model_Api_Cad_Finance extends Application_Model_Api_Abstract_A
         foreach($parsed['paymentdata']['vehicles'] as $key => $vehicle)
         {
             if(isset($leaseInfo[$key]))
+            {
                 $vehicle['payments'] = $leaseInfo[$key];
+                array_shift($vehicle['payments']);
+            }
             $vehicles[] = $vehicle;
         }
         return $vehicles;
