@@ -28,7 +28,7 @@ class Application_Model_Api_Motor_Maintenance extends Application_Model_Api_Abst
             $parsed = $this->execute('ID/' . $this->config_id);
             
             $parsed = $this->extract($parsed);
-                        
+                            
             $mongoCache->insert('maintain-' . $this->config_id, $parsed);
         } else {
             $parsed = array_shift($parsed);
@@ -51,6 +51,8 @@ class Application_Model_Api_Motor_Maintenance extends Application_Model_Api_Abst
                 $newItem['description'] = $item['EWTInfo']['LiteralName'];
                 $newItem['effort'] = $item['EWTInfo']['BaseLaborTime'] .
                     ' ' . $item['EWTInfo']['LaborTimeInterval'];
+                $newItem['freq-month'] = $item['IntervalMonth'];
+                $newItem['freq-mile'] = $item['IntervalMile'];
                 if($item['FrequencyDescription'] == 'Every')
                 {
                     $time = 'Every ';

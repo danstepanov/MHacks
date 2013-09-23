@@ -1,7 +1,20 @@
-
 <div class="row headline">
     <div class="span4">
+        <?php if(is_array($this->vehicle['external_colors'])) { $first = true; ?>
+            <?php foreach($this->vehicle['external_colors'] as $key => $color) { ?>
+                <?php $class=''; if(!$first) $class = 'hidden'; $first = false; ?>
+                <img class='selector-img <?php echo $class . " img-" . $key; ?> full-border-thick' src='<?php echo $color['url']; ?>'/>
+            <?php } ?>
+            <strong class='margin-top'>Color Selector</strong>
+            <ul class='top clearfix gallery-post-grid swatches'>
+                <?php foreach( $this->vehicle['external_colors'] as $key => $color ) { ?>
+                <li><div data-id='<?php echo $key ?>' class='swatch' style="background: <?php echo $color['swatch'] ?>"></div></li>
+                <?php } ?>
+            </ul>
+            <p class='clearfix'></p>
+        <?php } else { ?>
         <img class='full-border-thick' src='<?php echo $this->vehicle['photo'] ?>'/>
+        <?php } ?>
         <p></p>
         <p>   
             <a class='btn btn-primary btn-block' target='_blank' href='<?php echo $this->url(array('controller' => 'vehicle' ,'action'=>'servepdf', 'uvc'=> $this->vehicle['full_uvc']), null, true);?>'>Download New Car Cost Guide</a>
@@ -91,7 +104,7 @@
             <?php $articleCount = 0; foreach($this->vehicle['articles'] as $article) { ?>
                 <?php if($articleCount++ == 3) break; ?>
                 <li class='span4 gallery-item'>
-                    <a href="#"><img src="<?php echo $article['image']; ?>" alt="Gallery"></a>
+                    <a target='_blank' href="<?php echo $article['content_url']; ?>"><img src="<?php echo $article['image']; ?>" alt="Gallery"></a>
                     <span class="project-details"><a href="#"><?php echo $article['fullTitle']; ?></a><?php echo $article['fullDek'] ?></span>
                 </li>
             <?php } ?>
@@ -110,7 +123,7 @@
         <div class='tab-content'>
             <div class='tab-pane active' id='sche'>
                 <?php if($this->maintenanceData) { ?>
-                <h2>Parts you Need to Maintain Intervally</h2>
+                <h2>Parts you Need to Maintain Occasionally</h2>
                 <table class='table'>
                     <thead>
                         <tr>
@@ -123,7 +136,11 @@
                     </thead>
                     <tbody>
                         <?php foreach($this->maintenanceData['distance'] as $item) { ?>
-                        <tr>
+                        <tr data-miles="<?php echo $item['freq-mile'] ?>"
+                            data-months="<?php echo $item['freq-month'] ?>"
+                            data-title="<?php echo $item['description'] ?>"
+                            data-effort="<?php echo $item['effort'] ?>"
+                            data-frequency="<?php echo $item['frequency'] ?>">
                             <td><?php echo $item['description'] ?></td>
                             <td><?php echo $item['frequency'] ?></td>
                             <td><?php echo $item['effort'] ?></td>
@@ -376,14 +393,45 @@
 	    $(".setup").click(function(e) {
 		    $("tr.temp").remove();
 		    var row = "<tr class='temp'>";
-		    row += "<td><input name='months-since' type='text' placeholder='Months Since Last' /></td>";
-		    row += "<td><input name='miles-since' type='text' placeholder='Miles Since Last' /></td>";
-		    row += "<td><input name='miles-per' type='text' placeholder='Miles Per Week' /></td>";
-		    row += "<td><input name='email' type='text' placeholder='Email' /></td>";
+		    row += "<td><input required class='span3' name='months-since' type='text' placeholder='Months Since Last Check' /></td>";
+		    row += "<td><input class='span3' name='miles-since' type='text' placeholder='Miles Since Last Check' /></td>";
+		    row += "<td><input class='span2' name='miles-per' type='text' placeholder='Miles Per Week' /></td>";
+		    row += "<td><input class='span2' name='email' type='text' placeholder='Email' /></td>";
+            row += "<td><button type='submit' class='setup btn btn-primary'>Setup</button></td>";
 		    row += "</tr>";
 		    $(this).parents("tr").first().after(row);
 	        e.preventDefault();
 	        return true;
 	    });
+
+        $("body").on('click', '.btn.setup', function(e) {
+            var tr = $(this).parents("tr");
+            var data = tr.find("input").serialize();
+            var prev = tr.prev();
+            var monthIn = prev.data("months");
+            var milesIn = prev.data("miles");
+            var title = prev.data("title");
+            var effort = prev.data("effort");
+            var frequency = prev.data("frequency");
+            data += "&monthIn=" + monthIn + "&milesIn=" + milesIn + "&title=" + title +
+                    "&effort=" + effort + "&frequency=" + frequency;
+            var url = '<?php echo $this->url(array('controller'=>'vehicle', 'action'=>'ajax-setup')); ?>';
+            $.post(url, data).success(function(data) {
+                data = JSON.parse(data);
+                var success = 'text-error';
+                if(data['status'] == 200)
+                    success = 'text-success';
+                tr.html("<td colspan='4'><span class='"+success+"'>"+data['message']+"</span></td>"); 
+            });
+            setTimeout(function() {
+                tr.remove();
+            }, 4000);
+        });
+
+        $(".top.swatches .swatch").click(function() { 
+            var id = $(this).data("id");
+            $(".selector-img").addClass("hidden");
+            $(".selector-img.img-" + id).removeClass("hidden");
+        });
 })(jQuery);
 </script>

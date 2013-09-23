@@ -26,7 +26,10 @@ abstract class Application_Model_Api_Abstract_API
         curl_close ($APICall);
         
         if($Error != null && $Error != '')
-            throw new Exception(var_export($Error, true));
+        {
+            return array();
+        }
+            //throw new Exception(var_export($Error, true));
         
         $parsed = json_decode($APIResponse, true);
         

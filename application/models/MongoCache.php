@@ -13,6 +13,7 @@ class Application_Model_MongoCache
     {
         $data['cache_id'] = $id;
         
+        $this->collection->remove(['cache_id' => $id]);
         $this->collection->insert($data);
     }
     

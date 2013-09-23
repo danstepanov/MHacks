@@ -21,7 +21,11 @@ class Application_Model_Api_Cad_PerformanceData extends Application_Model_Api_Ab
         
         if($data == null)
         {
-            $data = $this->execute('');
+            try{
+                $data = $this->execute('');
+            }catch(Exception $e) {
+                return array();
+            }
             $mongoCache->insert('cad-perf-' . $this->id . "-" . $this->year, $data);
         }
         else

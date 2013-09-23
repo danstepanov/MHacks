@@ -11,29 +11,37 @@ class IndexController extends Zend_Controller_Action
     public function indexAction()
     {
     }
-    
-    public function importAction()
-    {
-        set_time_limit(120);
-        $mapModel = new Application_Model_DbTable_SearchMap();
-        if (($handle = fopen("test.csv", "r")) !== FALSE) {
-        	while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-        	    if($mapModel->fetchRow("uvc = '{$data[6]}'") == null)
-        	    {
-            	   $data = array(
-            	           'class' => $data[0],
-            	           'year' => $data[1],
-            	           'make' => $data[2],
-            	           'model' => $data[3],
-            	           'series' => $data[4],
-            	           'style' => $data[5],
-            	           'uvc' => $data[6]
-            	   );
-            	   $mapModel->insert($data);
-        	    }
-        	}
-        }
-    }
 
+    public function cronAction()
+    {
+        $emailModel = new Application_Model_DbTable_Emails();
+
+        $emails = $emailModel->getEmailsToSend($this->_getParam("force", false));
+
+        foreach($emails as $email)
+        {
+            $smtpServer = 'smtp.sendgrid.net';
+
+            $config = array('ssl' => 'tls',
+            'port' => '587',
+            'auth' => 'login',
+            'username' => 'sendgrid_user',
+            'password' => 'sendgrid_password');
+
+            $transport = new Zend_Mail_Transport_Smtp($smtpServer, $config);
+
+            $mail = new Zend_Mail();
+
+            $mail->setFrom('hax@stephenbussey.com', 'Auto-Mate');
+            $mail->addTo($email['to'],'Car Owner');
+            $mail->setSubject('Car Maintenance Notification');
+            $mail->setBodyText($email['body']);
+
+            $mail->send($transport);
+
+            echo "Email sent to " . $email['to'] . "<br>";
+        }
+        die();
+    }
 }
 

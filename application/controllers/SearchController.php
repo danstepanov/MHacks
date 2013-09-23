@@ -58,5 +58,16 @@ class SearchController extends Zend_Controller_Action
         
         die(json_encode($uvc));
     }
+
+    public function bingAction()
+    {
+        $term = $this->_getParam("term");
+        if($term)
+        {
+            $a = new Application_Model_Api_Bing_Bing($term);
+            echo $a->getImageUrl();
+        }
+        die();
+    }
 }
 
